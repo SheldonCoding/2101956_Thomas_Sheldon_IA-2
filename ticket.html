@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Ticket · Coding Conf 2026</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo">Coding Conf</a>
+    <nav aria-label="Main navigation">
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="login.html">Register</a></li>
+        <li><a href="ticket.html">Tickets</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="ticket-main page-shell">
+    <section class="success-heading" aria-labelledby="success-title">
+      <span class="success-icon" aria-hidden="true">✓</span>
+      <p class="eyebrow">REGISTRATION COMPLETE</p>
+      <h1 id="success-title">Congrats, <span class="gradient-text" id="heading-name">attendee</span>!<br>Your ticket is ready.</h1>
+      <p>We’re looking forward to seeing you at Coding Conf 2026.</p>
+    </section>
+
+    <section class="ticket-card" aria-label="Personalized Coding Conf conference ticket">
+      <div class="ticket-left">
+        <div class="ticket-brand">
+          <span class="brand-mark" aria-hidden="true">&lt;/&gt;</span>
+          <div><strong>Coding Conf</strong><small>2026 CONFERENCE</small></div>
+        </div>
+        <div class="ticket-event">
+          <p class="eyebrow">YOUR ENTRY PASS</p>
+          <h2>Code. Create.<br>Connect.</h2>
+          <p class="ticket-meta">October 26, 2026 <span aria-hidden="true">•</span> Papine, Kingston</p>
+        </div>
+        <div class="attendee-details">
+          <img id="ticket-avatar" class="ticket-avatar" src="" alt="">
+          <div class="attendee-copy">
+            <h3 id="ticket-name">Attendee Name</h3>
+            <a id="ticket-github" href="https://github.com/" target="_blank" rel="noopener noreferrer">@githubuser</a>
+          </div>
+        </div>
+      </div>
+      <div class="ticket-stub">
+        <span class="stub-label">CONFERENCE PASS</span>
+        <div class="barcode" aria-hidden="true"></div>
+        <p class="ticket-number" id="ticket-number">#01609</p>
+        <small>ADMIT ONE</small>
+      </div>
+    </section>
+
+    <div class="ticket-actions">
+      <a class="button button-secondary" href="index.html">Back to home</a>
+      <button class="button button-primary" id="print-ticket" type="button">Print Ticket <span aria-hidden="true">↗</span></button>
+    </div>
+  </main>
+
+  <footer class="site-footer page-shell">
+    <a class="brand" href="index.html">
+      <span class="brand-mark" aria-hidden="true">&lt;/&gt;</span>
+      <span>Coding Conf</span>
+    </a>
+    <p>&copy; 2026 Coding Conf. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const storageKey = "codingConfRegistration";
+
+    try {
+      const registration = JSON.parse(localStorage.getItem(storageKey) || "null");
+
+      if (!registration || !registration.fullName || !registration.avatar) {
+        window.location.replace("login.html");
+      } else {
+        const githubUsername = registration.github.replace(/^@/, "");
+
+        document.getElementById("heading-name").textContent = registration.fullName;
+        document.getElementById("ticket-name").textContent = registration.fullName;
+        document.getElementById("ticket-github").textContent = "@" + githubUsername;
+        document.getElementById("ticket-github").href =
+          "https://github.com/" + encodeURIComponent(githubUsername);
+        document.getElementById("ticket-avatar").src = registration.avatar;
+        document.getElementById("ticket-avatar").alt =
+          "Profile picture of " + registration.fullName;
+        document.getElementById("ticket-number").textContent =
+          "#" + (registration.ticketNumber || "01609");
+      }
+    } catch {
+      window.location.replace("login.html");
+    }
+
+    document.getElementById("print-ticket").addEventListener("click", () => {
+      window.print();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register · Coding Conf 2026</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo">Coding Conf</a>
+    <nav aria-label="Main navigation">
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="login.html">Register</a></li>
+        <li><a href="ticket.html">Tickets</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="registration-layout page-shell">
+    <section class="registration-intro">
+      <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> CODING CONF 2026</p>
+      <h1>Your ideas<br>deserve a <span class="gradient-text">bigger stage.</span></h1>
+      <p>Complete the form to reserve your place. Your personalized digital ticket will be generated when registration is successful.</p>
+      <div class="mini-event-details">
+        <span>▦ &nbsp; October 26, 2026</span>
+        <span>⌖ &nbsp; Papine, Kingston</span>
+      </div>
+    </section>
+
+    <section class="form-card" aria-labelledby="form-title">
+      <div class="form-card-heading">
+        <p class="eyebrow">REGISTRATION</p>
+        <h2 id="form-title">Get your ticket</h2>
+        <p>Enter your details below.</p>
+      </div>
+
+      <form id="registration-form" novalidate>
+        <div class="form-field">
+          <label for="full-name">Full name <span aria-hidden="true">*</span></label>
+          <input id="full-name" name="fullName" type="text" autocomplete="name" placeholder="e.g. Alex Morgan" required aria-describedby="name-error">
+          <small class="field-error" id="name-error"></small>
+        </div>
+
+        <div class="form-field">
+          <label for="email">Email address <span aria-hidden="true">*</span></label>
+          <input id="email" name="email" type="email" autocomplete="email" placeholder="alex@example.com" required aria-describedby="email-error">
+          <small class="field-error" id="email-error"></small>
+        </div>
+
+        <div class="form-field">
+          <label for="github">GitHub username <span aria-hidden="true">*</span></label>
+          <input id="github" name="github" type="text" placeholder="@alexmorgan" required aria-describedby="github-hint github-error">
+          <small class="field-hint" id="github-hint">Include the @ symbol at the beginning.</small>
+          <small class="field-error" id="github-error"></small>
+        </div>
+
+        <div class="form-field">
+          <label for="avatar">Upload profile picture <span aria-hidden="true">*</span></label>
+          <label class="upload-area" for="avatar">
+            <span class="upload-icon" aria-hidden="true">↑</span>
+            <span><strong>Choose an image</strong><small>JPEG or PNG · less than 500 KB</small></span>
+          </label>
+          <input class="visually-hidden" id="avatar" name="avatar" type="file" accept="image/jpeg,image/png" required aria-describedby="avatar-error avatar-name">
+          <small class="field-hint" id="avatar-name">No file selected.</small>
+          <small class="field-error" id="avatar-error"></small>
+        </div>
+
+        <button class="button button-primary button-full" type="submit">Generate My Ticket <span aria-hidden="true">↗</span></button>
+        <p class="form-footnote">Your information is stored in this browser for this demonstration.</p>
+        <p class="form-error-summary" id="form-message" role="alert" aria-live="assertive"></p>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById("registration-form");
+    const fields = {
+      fullName: document.getElementById("full-name"),
+      email: document.getElementById("email"),
+      github: document.getElementById("github"),
+      avatar: document.getElementById("avatar")
+    };
+
+    const errors = {
+      fullName: document.getElementById("name-error"),
+      email: document.getElementById("email-error"),
+      github: document.getElementById("github-error"),
+      avatar: document.getElementById("avatar-error")
+    };
+
+    const formMessage = document.getElementById("form-message");
+    const avatarName = document.getElementById("avatar-name");
+    const storageKey = "codingConfRegistration";
+    const maxAvatarSize = 500 * 1024;
+
+    fields.avatar.addEventListener("change", () => {
+      avatarName.textContent = fields.avatar.files[0]?.name || "No file selected.";
+      errors.avatar.textContent = "";
+      fields.avatar.removeAttribute("aria-invalid");
+    });
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      formMessage.textContent = "";
+
+      Object.values(errors).forEach((error) => {
+        error.textContent = "";
+      });
+      Object.values(fields).forEach((field) => {
+        field.removeAttribute("aria-invalid");
+      });
+
+      let isValid = true;
+      const name = fields.fullName.value.trim();
+      const email = fields.email.value.trim();
+      const github = fields.github.value.trim();
+      const file = fields.avatar.files[0];
+
+      function showError(field, errorElement, message) {
+        errorElement.textContent = message;
+        field.setAttribute("aria-invalid", "true");
+        isValid = false;
+      }
+
+      if (!name) {
+        showError(fields.fullName, errors.fullName, "Enter your full name.");
+      }
+
+      if (!email || !fields.email.validity.valid) {
+        showError(fields.email, errors.email, "Enter a valid email address.");
+      }
+
+      if (!/^@[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$/.test(github)) {
+        showError(fields.github, errors.github, "Enter a valid GitHub username starting with @.");
+      }
+
+      if (!file) {
+        showError(fields.avatar, errors.avatar, "Choose a profile picture.");
+      } else if (!["image/jpeg", "image/png"].includes(file.type)) {
+        showError(fields.avatar, errors.avatar, "Choose a JPEG or PNG image.");
+      } else if (file.size >= maxAvatarSize) {
+        showError(fields.avatar, errors.avatar, "The image must be smaller than 500 KB.");
+      }
+
+      if (!isValid) {
+        formMessage.textContent = "Please correct the highlighted fields.";
+        form.querySelector('[aria-invalid="true"]')?.focus();
+        return;
+      }
+
+      const reader = new FileReader();
+
+      reader.addEventListener("load", () => {
+        try {
+          localStorage.setItem(storageKey, JSON.stringify({
+            fullName: name,
+            email,
+            github,
+            avatar: reader.result,
+            ticketNumber: String(Math.floor(10000 + Math.random() * 90000))
+          }));
+          window.location.href = "ticket.html";
+        } catch {
+          formMessage.textContent = "Your registration could not be saved in this browser. Check available storage and try again.";
+        }
+      });
+
+      reader.addEventListener("error", () => {
+        formMessage.textContent = "The profile picture could not be read. Please choose another image.";
+      });
+
+      reader.readAsDataURL(file);
+    });
+  </script>
+</body>
+</html>
